@@ -9,9 +9,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Loader from "./Loading";
 import jwt_decode from "jwt-decode";
-
-const ProductsPage = ({ initialProducts , Categorys }) => {
+import { Tag } from "@/models/tag";
+const ProductsPage = ({ initialProducts , Categorys,Tag }) => {
   const [category, setCategory] = useState("");
+  const [tag, setTag] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [hasMore, setHasMore] = useState(true);
   const [products, setProducts] = useState(initialProducts);
@@ -23,12 +24,16 @@ const ProductsPage = ({ initialProducts , Categorys }) => {
   const router = useRouter();
   useEffect(() => {
     setFilteredProducts(filterProducts());
-  }, [products, category, sortBy, searchQuery]);
+  }, [products, category, tag,sortBy, searchQuery]);
 
   const {addProduct} = useContext(CartContext);
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
   };
+  const handleTagChange = (event) => {
+    setTag(event.target.value);
+  };
+
 
   const handleSortByChange = (event) => {
     setSortBy(event.target.value);
@@ -53,6 +58,11 @@ const ProductsPage = ({ initialProducts , Categorys }) => {
     if (category) {
       filteredProducts = filteredProducts.filter(
         (product) => product.category === category
+      );
+    }
+    if (tag) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.tag === tag
       );
     }
 
@@ -134,8 +144,27 @@ const ProductsPage = ({ initialProducts , Categorys }) => {
               ))}
             </select>
           </div>
-
-          <div>
+         
+          <div className="flex "> 
+          <div className="mr-4">
+            <label htmlFor="Tag" className="font-medium">
+              Tag:
+            </label>
+            <select
+              id="Tag"
+              value={tag}
+              onChange={handleTagChange}
+              className="border border-gray-300 rounded-md px-2 py-1 ml-2"
+            >
+              <option value="">All</option>
+              {Tag.map((category) => (
+                <option key={category._id} value={category._id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mr-4">
             <label htmlFor="sortBy" className="font-medium">
               Sort by:
             </label>
@@ -150,6 +179,7 @@ const ProductsPage = ({ initialProducts , Categorys }) => {
               <option value="price-high-to-low">Price: High to Low</option>
               <option value="date-latest">Date: Latest</option>
             </select>
+            </div>
           </div>
         </div>
         <form onSubmit={handleSearchSubmit} className="mb-4">
@@ -232,13 +262,15 @@ export async function getServerSideProps() {
   const products = await Product.find({}, null, { sort: { date: -1 } })
     .limit(12)
     .lean();
- 
+
+  const Tags = await Tag.find({}, null, { sort: { _id: -1 } });
 
   const Categorys = await Category.find({}, null, { sort: { _id: -1 } });
   return {
     props: {
       initialProducts: JSON.parse(JSON.stringify(products)),
       Categorys: JSON.parse(JSON.stringify(Categorys)),
+      Tag: JSON.parse(JSON.stringify(Tags)),
     },
   };
 }
