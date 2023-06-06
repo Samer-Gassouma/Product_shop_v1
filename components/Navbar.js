@@ -180,7 +180,7 @@ const Navbar = () => {
         }`}
       >
         <div className="px-2 pt-2 pb-3 space-y-1">
-          <Link href="/products">
+          <Link href="/Products">
             <div className="text-gray-300 hover:text-white block px-3 py-2 text-base font-medium">
               Products
             </div>
