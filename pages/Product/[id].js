@@ -82,7 +82,6 @@ function ProductPage({ product, recommendedProducts, comments2, isLiked2 }) {
       console.error("Error submitting the comment:", error);
     }
   };
-  console.log(userId);
   const handleLike = async () => {
     if (!isLiked) {
       try {
@@ -128,12 +127,12 @@ function ProductPage({ product, recommendedProducts, comments2, isLiked2 }) {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="flex flex-col justify-center"
+              className="flex flex-col justify-center "
             >
               <img
                 src={selectedImage}
                 alt={product.name}
-                className="w-full h-100 rounded-lg shadow-md mb-6"
+                className="w-full rounded-lg shadow-md mb-6"
               />
               <div className="flex justify-center space-x-2 mb-6">
                 {product.images.map((image, index) => (
@@ -162,7 +161,13 @@ function ProductPage({ product, recommendedProducts, comments2, isLiked2 }) {
               className="flex flex-col justify-center"
             >
               <h2 className="text-3xl font-bold mb-4">{product.title}</h2>
-              <p className="mb-6">{product.description}</p>
+              {product.description.length > 20 ? (
+                <p className="text-lg mb-4">
+                  {product.description.substring(0, 20)}...
+                </p>
+              ) : (
+              <p className="text-lg mb-4">{product.description}</p>
+              )}
               {userId ? (
                 <div className="flex items-center mb-6">
                   <span className="text-2xl font-bold">{product.price} dt</span>

@@ -8,7 +8,11 @@ import Link from "next/link";
 import Loader from "../Loading";
 import jwt_decode from "jwt-decode";
 import Image from "next/image";
+import { useContext } from "react";
+import { CartContext } from "@/components/CartContext";
+
 export default function Item({ Grp_product, products }) {
+
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -20,6 +24,7 @@ export default function Item({ Grp_product, products }) {
       setUserId(decodedToken.userId);
     }
   }, []);
+
   useEffect(() => {
     const handleStart = () => {
       setIsLoading(true);
@@ -40,35 +45,31 @@ export default function Item({ Grp_product, products }) {
     };
   }, [router.events]);
 
-  if(router.isFallback) {
-    return <Loader />
-  }
-
-  if(isLoading) {
-    return <Loader />
+  if (router.isFallback || isLoading) {
+    return <Loader />;
   }
 
   return (
     <Layout>
-      <div className=" min-h-screen pt-16">
-        <div className="container mx-auto p-4">
-          <GroupsPage Grp_product={Grp_product} products={products} isLoading={isLoading} userId={userId}/>
-        </div>
+      <div className="min-h-screen pt-16 container mx-auto p-4">
+        <GroupsPage Grp_product={Grp_product} products={products} userId={userId} />
       </div>
     </Layout>
   );
 }
 
-function GroupsPage({ Grp_product, products, isLoading ,userId}) {
+function GroupsPage({ Grp_product, products, userId }) {
+  const { addProduct } = useContext(CartContext);
+
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-3xl font-bold mb-4">{Grp_product.title}</h2>
       <div className="flex items-center justify-center mb-6">
         <Image
-          width={300}
-          height={64}
           src={Grp_product.images[0]}
           alt={Grp_product.title}
+          width={300}
+          height={200}
           className="w-full h-64 object-cover rounded-md"
         />
       </div>
@@ -76,48 +77,41 @@ function GroupsPage({ Grp_product, products, isLoading ,userId}) {
         {products.map((element) => (
           <div
             key={element.id}
-            className=" shadow-lg rounded-lg overflow-hidden transition duration-300 transform hover:-translate-y-1 hover:shadow-xl"
+            className="shadow-lg rounded-lg overflow-hidden transition duration-300 transform hover:-translate-y-1 hover:shadow-xl "
           >
             <Link href={`/Product/${element.id}`}>
-              
-                <div className="relative">
+                <div className="relative bg-white">
                   <Image
-                  width={300}
-                  height={64}
                     src={element.images}
                     alt={element.title}
-                    className="w-full h-64 object-cover"
+                    width={300}
+                    height={200}
+                    className="w-full h-64 object-cover rounded-t-md"
                   />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-white bg-opacity-80">
-                    <h3 className="text-lg text-gray-600 font-semibold mb-2">{element.title}</h3>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-white bg-opacity-80 rounded-b-md">
+                    <h3 className="text-lg text-gray-800 font-semibold mb-2">{element.title}</h3>
                     <p className="text-gray-600">{element.price} dt</p>
                   </div>
-                </div>
+                </div>  
               
             </Link>
-            { userId ? (  
-            <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mt-4 w-full">
-              Add to Cart
-            </button>
+            {userId ? (
+              <button  onClick={() => addProduct(element.id)}  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-b-md">
+                Add to Cart
+              </button>
             ) : (
               <Link href="/login">
-                <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mt-4 w-full">
+                <div className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-b-md">
                   Add to Cart
-                </button>
+                </div>
               </Link>
             )}
           </div>
         ))}
       </div>
-      {isLoading && (
-        <div className="flex justify-center mt-8">
-          <div className="loader"></div>
-        </div>
-      )}
     </div>
   );
 }
-
 
 export async function getServerSideProps(context) {
   await mongooseConnect();

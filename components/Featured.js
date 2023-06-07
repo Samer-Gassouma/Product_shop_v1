@@ -1,22 +1,29 @@
-import React, { useRef, useContext } from "react";
+import React, { useRef, useContext,useState,useEffect } from "react";
 import Link from "next/link";
 import { Canvas, useLoader, useFrame } from "react-three-fiber";
 import { OrbitControls } from "@react-three/drei";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
-import { CartContext } from "@/components/CartContext";
 
+import Loader from "@/pages/Loading";
+import { useRouter } from "next/router";
 const FurnitureModel = () => {
+  
   const ref = useRef();
   const model = useLoader(OBJLoader, "fb.obj");
+  const material = useLoader(MTLLoader, "fb.mtl");
+  model.material = material;
+  
 
   useFrame(() => {
     ref.current.rotation.y += 0.01;
+    
   });
 
   return (
     <mesh ref={ref}>
-      <primitive object={model} />
+      
+      <primitive object={model} material={material} />
     </mesh>
   );
 };
@@ -43,6 +50,38 @@ const ThreeScene = () => {
 };
 
 export default function HomePage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleStart = () => {
+      setIsLoading(true);
+    };
+
+    const handleComplete = () => {
+      setIsLoading(false);
+    };
+
+    router.events.on("routeChangeStart", handleStart);
+    router.events.on("routeChangeComplete", handleComplete);
+    router.events.on("routeChangeError", handleComplete);
+
+    return () => {
+      router.events.off("routeChangeStart", handleStart);
+      router.events.off("routeChangeComplete", handleComplete);
+      router.events.off("routeChangeError", handleComplete);
+    };
+  }, [router.events]);
+
+  if(router.isFallback) {
+    return <Loader />
+  }
+
+  if(isLoading) {
+    return <Loader />
+  }
+
+
   return (
     <div className="pt-16">
       <header className="relative h-96">

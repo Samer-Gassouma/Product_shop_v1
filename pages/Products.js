@@ -233,12 +233,12 @@ const ProductsPage = ({ initialProducts , Categorys,Tag }) => {
                   {product.price.toFixed(2)} dt
                 </p>
                 {userId ? (
-                <button onClick={() => addProduct(product._id)} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mt-4">
+                <button onClick={() => addProduct(product._id)} className="bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 rounded-md mt-4">
                   Add to Cart
                 </button>
                 ) : (
                   <Link href="/login">
-                    <div className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mt-4">
+                    <div className="bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 rounded-md mt-4">
                       Login to add to cart
                     </div>
                   </Link>
