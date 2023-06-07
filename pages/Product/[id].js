@@ -10,6 +10,7 @@ import Link from "next/link";
 import { ObjectId } from "mongodb";
 import Comment from "@/models/comments";
 import Like from "@/models/Like";
+import Image from "next/image";
 
 export default function Prod({
   product,
@@ -129,7 +130,9 @@ function ProductPage({ product, recommendedProducts, comments2, isLiked2 }) {
               transition={{ duration: 0.6 }}
               className="flex flex-col justify-center "
             >
-              <img
+              <Image
+                width={500}
+                height={500}
                 src={selectedImage}
                 alt={product.name}
                 className="w-full rounded-lg shadow-md mb-6"
@@ -281,7 +284,9 @@ function ProductPage({ product, recommendedProducts, comments2, isLiked2 }) {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Link href={`/Product/${product._id}`}>
-                    <img
+                    <Image
+                      width={300}
+                      height={40}
                       src={product.images[0]}
                       alt={product.title}
                       className="w-full h-40 object-cover"

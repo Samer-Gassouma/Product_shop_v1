@@ -1,10 +1,13 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const GroupCard = ({ group }) => {
   return (
     <div className="max-w-sm rounded overflow-hidden shadow-lg">
-      <img
+      <Image
+        width={300}
+        height={48}
         className="w-full h-48 object-cover"
         src={group.images[0]}
         alt={group.title}

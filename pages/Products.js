@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import Loader from "./Loading";
 import jwt_decode from "jwt-decode";
 import { Tag } from "@/models/tag";
+import Image from "next/image";
 const ProductsPage = ({ initialProducts , Categorys,Tag }) => {
   const [category, setCategory] = useState("");
   const [tag, setTag] = useState("");
@@ -24,7 +25,7 @@ const ProductsPage = ({ initialProducts , Categorys,Tag }) => {
   const router = useRouter();
   useEffect(() => {
     setFilteredProducts(filterProducts());
-  }, [products, category, tag,sortBy, searchQuery]);
+  }, [filtered_Products,products, category, tag,sortBy, searchQuery]);
 
   const {addProduct} = useContext(CartContext);
   const handleCategoryChange = (event) => {
@@ -218,7 +219,9 @@ const ProductsPage = ({ initialProducts , Categorys,Tag }) => {
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <Link href={`/Product/${product._id}`}>
-              <img
+              <Image
+                width={300}
+                height={48}
                 src={product.images[0]}
                 alt={product.title}
                 className="w-full h-48 object-cover object-center"
